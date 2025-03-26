@@ -8,16 +8,16 @@ defmodule Rizz.Feed do
   alias Rizz.Item
 
   @type t :: %__MODULE__{
-    title: String.t() | nil,
-    link: String.t() | nil,
-    description: String.t() | nil,
-    language: String.t() | nil,
-    pub_date: DateTime.t() | nil,
-    last_build_date: DateTime.t() | nil,
-    generator: String.t() | nil,
-    ttl: non_neg_integer() | nil,
-    items: [Item.t()]
-  }
+          title: String.t() | nil,
+          link: String.t() | nil,
+          description: String.t() | nil,
+          language: String.t() | nil,
+          pub_date: DateTime.t() | nil,
+          last_build_date: DateTime.t() | nil,
+          generator: String.t() | nil,
+          ttl: non_neg_integer() | nil,
+          items: [Item.t()]
+        }
 
   defstruct [
     :title,
@@ -34,19 +34,33 @@ defmodule Rizz.Feed do
   @doc """
   Converts a standard ElixirFeedParser feed to RIZZ format.
   """
-  def from_standard_feed(feed, opts \\ []) do
+  def from_standard_feed(feed, _opts \\ []) do
     feed
   end
 
   @doc """
   Creates a new feed with the given properties.
+
+  ## Example
+
+      iex> feed = Rizz.Feed.new(title: "AI News")
+      iex> feed.title
+      "AI News"
+
   """
   def new(props \\ %{}) do
-    %{
+    props = if Keyword.keyword?(props), do: Map.new(props), else: props
+
+    %__MODULE__{
       title: Map.get(props, :title),
+      link: Map.get(props, :link),
       description: Map.get(props, :description),
-      url: Map.get(props, :url),
-      entries: Map.get(props, :entries, [])
+      language: Map.get(props, :language),
+      pub_date: Map.get(props, :pub_date),
+      last_build_date: Map.get(props, :last_build_date),
+      generator: Map.get(props, :generator),
+      ttl: Map.get(props, :ttl),
+      items: Map.get(props, :items, [])
     }
   end
 

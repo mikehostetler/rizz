@@ -26,12 +26,20 @@ defmodule Rizz.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elixir_feed_parser, "~> 2.1"},  # Base RSS/Atom parsing
-      {:req, "~> 0.4.0"},               # HTTP client
-      {:jason, "~> 1.4"},               # JSON parsing for JSON-LD
-      {:timex, "~> 3.7"},               # DateTime handling
-      {:sweet_xml, "~> 0.7"},           # XML extensions for AI metadata
-      {:ex_doc, "~> 0.29", only: :dev, runtime: false}  # Documentation
+      # Base RSS/Atom parsing
+      {:elixir_feed_parser, "~> 2.1"},
+      # HTTP client
+      {:req, "~> 0.4.0"},
+      # JSON parsing for JSON-LD
+      {:jason, "~> 1.4"},
+      # DateTime handling
+      {:timex, "~> 3.7"},
+      # XML extensions for AI metadata
+      {:sweet_xml, "~> 0.7"},
+      # XML generation
+      {:xml_builder, "~> 2.2"},
+      # Documentation
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]
   end
 

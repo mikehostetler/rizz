@@ -80,9 +80,10 @@ defmodule Rizz do
   """
   @spec filter_by_model(map(), String.t()) :: map()
   def filter_by_model(feed, model) do
-    filtered_entries = Enum.filter(feed.entries, fn entry ->
-      compatible_with_model?(entry, model)
-    end)
+    filtered_entries =
+      Enum.filter(feed.entries, fn entry ->
+        compatible_with_model?(entry, model)
+      end)
 
     %{feed | entries: filtered_entries}
   end
@@ -106,9 +107,10 @@ defmodule Rizz do
   def filter_by_quality(feed, opts \\ []) do
     min_quality = Keyword.get(opts, :min_quality, 0)
 
-    filtered_entries = Enum.filter(feed.entries, fn entry ->
-      get_data_quality(entry) >= min_quality
-    end)
+    filtered_entries =
+      Enum.filter(feed.entries, fn entry ->
+        get_data_quality(entry) >= min_quality
+      end)
 
     %{feed | entries: filtered_entries}
   end
@@ -186,11 +188,14 @@ defmodule Rizz do
   @spec compatible_with_model?(map(), String.t()) :: boolean()
   def compatible_with_model?(entry, model) do
     case get_ai_models(entry) do
-      nil -> false
+      nil ->
+        false
+
       models when is_list(models) ->
         Enum.any?(models, fn m ->
           String.contains?(m, model) || String.contains?(model, m)
         end)
+
       model_string when is_binary(model_string) ->
         String.contains?(model_string, model) || String.contains?(model, model_string)
     end
@@ -208,5 +213,63 @@ defmodule Rizz do
   @spec ai_namespace() :: String.t()
   def ai_namespace do
     @ai_namespace
+  end
+
+  @doc """
+  Creates a new RIZZ feed with the given options.
+
+  ## Options
+
+  * `:title` - Feed title (required)
+  * `:link` - Feed link
+  * `:description` - Feed description
+  * `:language` - Feed language
+  * `:pub_date` - Publication date
+  * `:last_build_date` - Last build date
+  * `:generator` - Feed generator
+  * `:ttl` - Time to live
+
+  ## Example
+
+      iex> feed = Rizz.new_feed(title: "AI News Feed")
+      iex> feed.title
+      "AI News Feed"
+
+  """
+  @spec new_feed(Keyword.t()) :: Feed.t()
+  def new_feed(opts) do
+    Feed.new(opts)
+  end
+
+  @doc """
+  Adds an item to a RIZZ feed.
+
+  ## Example
+
+      iex> feed = Rizz.new_feed(title: "AI News Feed")
+      iex> feed = Rizz.add_item(feed, %{title: "AI Update", ai_model: ["GPT"]})
+      iex> length(feed.items)
+      1
+
+  """
+  @spec add_item(Feed.t(), map()) :: Feed.t()
+  def add_item(feed, item) do
+    Feed.add_item(feed, item)
+  end
+
+  @doc """
+  Converts a feed to RIZZ-compliant XML.
+
+  ## Example
+
+      iex> feed = Rizz.new_feed(title: "AI News Feed")
+      iex> xml = Rizz.to_xml(feed)
+      iex> String.contains?(xml, "<title>AI News Feed</title>")
+      true
+
+  """
+  @spec to_xml(Feed.t()) :: String.t()
+  def to_xml(feed) do
+    Rizz.Builder.to_xml(feed)
   end
 end
